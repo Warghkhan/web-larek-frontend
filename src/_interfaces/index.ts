@@ -11,6 +11,11 @@ interface InterfaceEventDispatcher {
 interface InterfaceProductInfo {
 	id: string;
 	productTitle: string;
+	descriptionProduct: string;
+	imageProduct: string;
+	priceProduct: number;
+	categoryProduct: string;
+	inBasket: boolean;
 }
 
 interface InterfaceCatalogueModel {
@@ -30,6 +35,10 @@ interface InterfaceViewConstructor {
 	): InterfaceView;
 }
 
+export interface InterfaceProductResponse {
+	items: InterfaceProductInfo[];
+}
+
 export {
 	InterfaceBasketModel,
 	InterfaceCatalogueModel,
@@ -37,4 +46,5 @@ export {
 	InterfaceProductInfo,
 	InterfaceView,
 	InterfaceViewConstructor,
+	
 };
