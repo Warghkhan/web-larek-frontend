@@ -1,4 +1,3 @@
-import { InterfaceProductInfo, InterfaceProductResponse } from './_interfaces';
 import { Api } from './components/base/api';
 import './scss/styles.scss';
 import { API_URL } from './utils/constants';
@@ -12,15 +11,6 @@ const configurations = {
   },
 };
 */
-const getAllProductsFromServer = new Api(API_URL);
-getAllProductsFromServer
-	.get('/product')
-	.then((res: InterfaceProductResponse) => {
-		console.log(res.items as InterfaceProductInfo[]);
-	})
-	.catch((err) => {
-		console.error(err);
-	});
 
 /*
 const getResponseData = (res: Response) => {
