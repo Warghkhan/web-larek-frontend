@@ -127,3 +127,5 @@ yarn build
     - `categoryItem: Categories`: Категория товара.
     - `costItem: number`: Цена товара.
     - `isItemSelected: boolean`: Указание на то, выбран ли товар.
+### Схема
+![](other/UML_type_n_interfaces.drawio.png)
