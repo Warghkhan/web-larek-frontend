@@ -27,7 +27,7 @@ export type PaymentMapping = {
 // Ответ API, содержащий массив элементов
 export interface ApiResponse {
 	// общее количество элементов
-	total: number; 
+	total: number;
 	// массив всех элементов
 	items: Item[];
 }
@@ -99,6 +99,11 @@ export interface OrderResponse {
 	// Общая стоимость заказа
 	total: number;
 }
+// Интерфейс SuccesAction с обработчиком события клика.
+export interface SuccesAction {
+	// Обработчик клика, который будет вызван при нажатии на элемент.
+	onClick: (event: MouseEvent) => void;
+}
 
 // Интерфейс для обработки ошибок
 export interface ErrorResponse {
@@ -111,15 +116,57 @@ export interface ErrorResponse {
 */
 export interface Item {
 	// ID товара
-	id: string; 
+	id: string;
 	// название товара
-	title: string; 
+	title: string;
 	// ссылка на картинку товара
-	image: string; 
+	image: string;
 	// описание товара
-	description: string; 
+	description: string;
 	// категория товара
-	category: Categories; 
+	category: Categories;
 	// цена товара
-	price: number | null; // изменено с costItem на price
+	price: number | null;
 }
+
+/*
+Интерфейс для компонента page
+*/
+export interface PageInterface {
+	// счетчик корзины
+	counter: number;
+	// массив товаров
+	gallery: HTMLElement[];
+	// блокировка прокрутки страницы
+	locked: boolean;
+}
+
+/*
+Интерфейс для компонента modal
+*/
+export interface ModalInterface {
+	// показываемое содержимое
+	content: HTMLElement;
+}
+
+
+/*
+Интерфейс для компонента cart
+*/
+export interface CartInterface {
+// Массив товаров в корзине
+	items: string[];
+// Общая стоимость
+	total: number;
+}
+
+
+/*
+Интерфейс для компонента form
+*/
+export interface FormInterface {
+	// Указывает, является ли форма валидной.
+		valid: boolean;
+	// Список ошибок валидации, если таковые имеются.
+		errors: string[];
+	}
