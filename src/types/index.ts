@@ -17,14 +17,7 @@ export type CategoryMapping = {
 export type ValidationErrors = Partial<Record<keyof OrderForm, string>>;
 
 // Доступные методы оплаты
-export type PaymentMethod =
-	| 'карта'
-	| 'наличные'
-	| 'платежная система'
-	| 'криптовалюта'
-	| 'бартер'
-	| 'крышки'
-	| 'иное';
+export type PaymentMethod = 'online' | 'offline' | 'other';
 
 // Сопоставление методов оплаты с их строковыми представлениями
 export type PaymentMapping = {
@@ -33,6 +26,9 @@ export type PaymentMapping = {
 
 // Ответ API, содержащий массив элементов
 export interface ApiResponse {
+	// общее количество элементов
+	total: number; 
+	// массив всех элементов
 	items: Item[];
 }
 
@@ -76,41 +72,38 @@ export interface ApplicationState {
 	resetSelection(): void;
 }
 
-/*
-Интерфейс для описания контактной информации пользователя.
-Адрес доставки не включен в этот интерфейс, так как он может варьироваться в зависимости от текущих пожеланий пользователя.
-*/
-export interface UserContactInfo {
+// Интерфейс для формы заказа
+export interface OrderForm {
 	// Электронная почта пользователя
 	email: string;
 	// Номер телефона пользователя
-	phoneNumber: string;
+	phone: string;
+	// Адрес доставки для заказа
+	address: string;
+	// Метод оплаты для заказа
+	payment: PaymentMethod;
 }
 
-/*
-Интерфейс для описания атрибутов заказа товара.
-Наследует контактную информацию пользователя и включает детали, специфичные для заказа.
-*/
-export interface Order extends UserContactInfo {
+// Интерфейс для заказа
+export interface Order extends OrderForm {
 	// Массив идентификаторов купленных товаров
 	items: string[];
-	// Метод оплаты для заказа
-	paymentMethod: PaymentMethod;
 	// Общая стоимость заказа в валюте
-	totalCost: number;
-	// Адрес доставки для заказа (может отличаться от контактной информации)
-	deliveryAddress: string;
+	total: number;
 }
 
-/*
-Интерфейс для описания формы заказа.
-Наследует контактную информацию пользователя и содержит поля для метода оплаты и адреса доставки.
-*/
-export interface OrderForm extends UserContactInfo {
-	// Метод оплаты для заказа
-	paymentMethod: PaymentMethod;
-	// Адрес доставки для заказа
-	deliveryAddress: string;
+// Интерфейс для успешного ответа при оформлении заказа
+export interface OrderResponse {
+	// Уникальный идентификатор заказа
+	id: string;
+	// Общая стоимость заказа
+	total: number;
+}
+
+// Интерфейс для обработки ошибок
+export interface ErrorResponse {
+	// Сообщение об ошибке
+	error: string;
 }
 
 /*
@@ -118,17 +111,15 @@ export interface OrderForm extends UserContactInfo {
 */
 export interface Item {
 	// ID товара
-	idItem: string;
+	id: string; 
 	// название товара
-	titleItem: string;
+	title: string; 
 	// ссылка на картинку товара
-	imageItem: string;
+	image: string; 
 	// описание товара
-	descriptionItem: string;
+	description: string; 
 	// категория товара
-	categoryItem: Categories;
+	category: Categories; 
 	// цена товара
-	costItem: number;
-	// выбран ли товар
-	isItemSelected: boolean;
+	price: number | null; // изменено с costItem на price
 }
