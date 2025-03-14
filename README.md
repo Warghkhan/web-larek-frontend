@@ -123,12 +123,8 @@ yarn build
 
 - **PaymentMapping**: Сопоставление методов оплаты с их строковыми представлениями.
 
-  - **Тип**:
-    ```typescript
-    {
-      [Key in PaymentMethod]: string;
-    }
-    ```
+  - **Тип**:   `[Key in PaymentMethod]: string;`
+    
 
 - **OrderFormInterface**: Интерфейс для описания формы заказа.
 
