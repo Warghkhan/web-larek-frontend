@@ -761,8 +761,7 @@ yarn build
 - **`isBoolean(v: unknown): v is boolean`**: Проверяет, является ли значение булевым.
 - **`createElement<T extends HTMLElement>(tagName: keyof HTMLElementTagNameMap, props?: Partial<Record<keyof T, string | boolean | object>>, children?: HTMLElement | HTMLElement[]): T`**: Создает новый элемент DOM с указанными свойствами и дочерними элементами.
 - **`handlePrice(price: number): string`**: Форматирует цену, добавляя пробелы каждые три цифры.
-- **`handleError(errorMessage: string): void`**:  Логирует  сообщение об ошибке в консоль.
-
+- **`handleError(errorMessage: string): void`**: Логирует сообщение об ошибке в консоль.
 
 ## constants.ts
 
