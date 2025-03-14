@@ -1,12 +1,12 @@
 import { Component } from '../../base/component'; // Импортируем базовый класс Component
-import { OrderResponse, SuccesAction } from '../../../types'; // Импортируем интерфейсы OrderResponse и SuccesAction для определения структуры ответа заказа и действий.
+import { OrderResponse, Action } from '../../../types'; // Импортируем интерфейсы OrderResponse и SuccesAction для определения структуры ответа заказа и действий.
 import { ensureElement } from '../../../utils/utils'; // Импортируем утилиты для безопасного получения элементов DOM.
 
 export class Success extends Component<OrderResponse> {
 	protected _total: HTMLElement; // Элемент для отображения общей суммы заказа.
 	protected _close: HTMLButtonElement; // Кнопка закрытия
 
-	constructor(protected container: HTMLFormElement, actions?: SuccesAction) {
+	constructor(protected container: HTMLFormElement, actions?: Action) {
 		super(container); // Вызываем конструктор родительского класса Component.
 
 		// Ищем элемент для отображения общей суммы заказа в контейнере.
