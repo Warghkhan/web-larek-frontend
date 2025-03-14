@@ -7,9 +7,6 @@ export const API_URL = `${process.env.API_ORIGIN}/api/weblarek`;
 // Константа для URL контента, формируется из той же переменной окружения
 export const CDN_URL = `${process.env.API_ORIGIN}/content/weblarek`;
 
-// Пустой объект для настроек, который можно использовать для хранения конфигурации
-export const settings = {};
-
 // Объект для сопоставления категорий, соответствующий типу CategoryMapping
 export const categoryMapping: CategoryMapping = {
 	'софт-скил': 'card__category_soft',           // Сопоставление категории "софт-скил" с CSS классом
