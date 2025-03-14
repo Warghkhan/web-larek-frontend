@@ -83,7 +83,9 @@ export interface ApplicationStateInterface {
 	// Преобразует данные с сервера в формат приложения
 	populateInventory(items: Item[]): void;
 	// Сбрасывает поле isSelected у всех товаров после покупки
+	/*
 	resetSelection(): void;
+	*/
 }
 
 // Интерфейс для формы заказа
