@@ -37,10 +37,6 @@ export class Page extends View<PageInterface> {
 
 	// Сеттер для управления блокировкой прокрутки страницы
 	set locked(value: boolean) {
-		if (value) {
-			this._wrapper.classList.add('page__wrapper_locked'); // Добавляем класс для блокировки прокрутки
-		} else {
-			this._wrapper.classList.remove('page__wrapper_locked'); // Удаляем класс для разблокировки прокрутки
-		}
+		this.toggleClass(this._wrapper, 'page__wrapper_locked', value);
 	}
 }

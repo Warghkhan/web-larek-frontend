@@ -51,7 +51,7 @@ export class Card extends Component<CardInterface> {
 
 	// Геттер и сеттер для title карточки
 	set title(value: string) {
-		this._title.textContent = value; // Установка текста заголовка
+		this.setText(this._title, value); // Установка текста заголовка
 	}
 	get title(): string {
 		return this._title.textContent || ''; // Получение текста заголовка
@@ -59,7 +59,7 @@ export class Card extends Component<CardInterface> {
 
 	// Сеттер для изображения карточки
 	set image(value: string) {
-		this._image.src = `${CDN_URL}${value}`; // Установка источника изображения
+		this.setImage(this._image, `${CDN_URL}${value}`); // Установка источника изображения
 	}
 
 	// Сеттер для изменения текста кнопки
@@ -69,20 +69,22 @@ export class Card extends Component<CardInterface> {
 
 	// Сеттер для состояния выбора карточки
 	set selected(value: boolean) {
-		this._button.disabled = value; // Установка состояния кнопки (активна/неактивна)
+		this.setDisabled(this._button, value); // Установка состояния кнопки (активна/неактивна)
 	}
 
 	// Сеттер для цены карточки
 	set price(value: number | null) {
-		this._price.textContent = value
-			? `${handlePrice(value)} синапсов` // Форматирование цены
-			: 'Бесценно'; // Если цена отсутствует
-		this._button.disabled = !value; // Дизаблизация кнопки, если цена отсутствует
+		if (value !== null) {
+			this.setText(this._price, `${handlePrice(value)} синапсов`); // Форматирование цены
+		} else {
+			this.setText(this._price, 'Бесценно'); // Если цена отсутствует
+		}
+		this.setDisabled(this._button, value === null); // Дизаблизация кнопки, если цена отсутствует
 	}
 
 	// Сеттер для категории карточки
 	set category(value: Categories) {
-		this._category.textContent = value; // Установка текста категории
+		this.setText(this._category, value); // Установка текста категории
 		this._category.className = categoryMapping[value]; // Заменяем все классы на новый
 	}
 }
@@ -107,6 +109,6 @@ export class ProductPreview extends Card {
 
 	// Сеттер для описания карточки
 	set description(value: string) {
-		this._description.textContent = value; // Установка текста описания
+		this.setText(this._description, value); // Установка текста описания
 	}
 }

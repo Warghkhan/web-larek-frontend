@@ -1,9 +1,9 @@
 // Импортируем базовый класс Api и необходимые типы из других файлов
-import { Api } from '../components/base/api';
+import { Api } from './base/api';
 import { ApiResponse, Item, OrderInterface, OrderResponse } from '../types';
 
-// Определяем класс ApiHandler, который наследуется от класса Api
-export class ApiHandler extends Api {
+// Определяем класс AApplicationApi, который наследуется от класса Api
+export class ApplicationApi extends Api {
 	readonly cdn: string; // Переменная для хранения базового URL для изображений
 
 	// Конструктор класса принимает URL для CDN, базовый URL API и опциональные параметры запроса

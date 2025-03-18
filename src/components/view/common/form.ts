@@ -44,7 +44,7 @@ export class Form<T> extends View<FormInterface> {
 
 	// Сеттер для свойства valid, который включает или отключает кнопку отправки.
 	set valid(value: boolean) {
-		this._submit.disabled = !value; // Деактивируем кнопку, если форма не валидна.
+		this.setDisabled(this._submit, !value); // Деактивируем кнопку, если форма не валидна
 	}
 
 	// Сеттер для свойства errors, который обновляет текст ошибок валидации.

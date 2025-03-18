@@ -41,8 +41,8 @@ export class OrderForm extends Form<OrderFormInterface> {
 
 	private toggleActiveButton(activeButton: string) {
 		// Метод для управления активным состоянием кнопок
-		this._cash.classList.toggle('button_alt-active', activeButton === 'cash'); // Активировать кнопку наличными, если она выбрана
-		this._card.classList.toggle('button_alt-active', activeButton === 'card'); // Активировать кнопку картой, если она выбрана
+		this.toggleClass(this._cash, 'button_alt-active', activeButton === 'cash'); // Активировать кнопку наличными
+		this.toggleClass(this._card, 'button_alt-active', activeButton === 'card'); // Активировать кнопку картой
 	}
 
 	disableButtons() {

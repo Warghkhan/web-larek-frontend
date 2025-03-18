@@ -1,24 +1,23 @@
 // Импорт необходимых модулей и компонентов
-import { ApiHandler } from './utils/apiHandler'; // Модуль для работы с API
+import { ApplicationApi } from './components/ApplicationApi'; // Модуль для работы с API
 import { EventEmitter } from './components/base/events'; // Модуль для управления событиями
 import { Page } from './components/view/specific/page'; // Компонент страницы
 import { Modal } from './components/view/common/modal'; // Компонент модального окна
-import { Card, Product, ProductPreview } from './components/view/specific/card'; // Компоненты карточки товара
+import { Card } from './components/view/specific/card'; // Компоненты карточки товара
 import { ApplicationState } from './components/model/ApplicationState'; // Состояние приложения
 import { ensureElement, cloneTemplate, handleError } from './utils/utils'; // Утилиты для работы с элементами и шаблонами
-import { ApiResponse, Item, OrderFormInterface, OrderInterface } from './types'; // Типы данных для API и заказов
+import { Item, OrderFormInterface } from './types'; // Типы данных для API и заказов
 import { API_URL, CDN_URL } from './utils/constants'; // Константы для API и CDN
 import './scss/styles.scss'; // Импорт стилей
 import { Cart } from './components/view/common/cart'; // Компонент корзины
 import { OrderForm } from './components/view/specific/orderForm'; // Компонент формы заказа
 import { UserInfo } from './components/view/specific/userInfo'; // Компонент информации о пользователе
 import { Success } from './components/view/common/succes'; // Компонент успешного завершения
-import { CartHandler } from './utils/cartHandler'; // Модуль для управления корзиной
 
 // Создание экземпляров необходимых классов
-const apiHandler = new ApiHandler(API_URL, CDN_URL); // Экземпляр для работы с API
+const applicationApi = new ApplicationApi(CDN_URL, API_URL); // Экземпляр для работы с API
 const events = new EventEmitter(); // Экземпляр для управления событиями
-const cartHandler = new CartHandler(events); // Экземпляр для управления корзиной с использованием событий
+const applicationState = new ApplicationState(events);
 
 // Убедитесь, что передаете строку в ensureElement
 // Получение шаблонов из HTML документа
@@ -39,9 +38,9 @@ const orderForm = new OrderForm('order', cloneTemplate(orderTemplate), events); 
 const contacts = new UserInfo(cloneTemplate(contactsTemplate), events); // Экземпляр информации о пользователе
 
 // Получение списка продуктов и установка их в корзину
-apiHandler
+applicationApi
 	.getProductList() // Запрос списка продуктов
-	.then(cartHandler.setItems.bind(apiHandler)) // Установка полученных продуктов в корзину
+	.then(applicationState.populateInventory.bind(applicationApi)) // Установка полученных продуктов в корзину
 	.catch((e) => console.warn(e)); // Логирование ошибок, если они возникли
 
 // Обработчики событий для открытия и закрытия модального окна
@@ -55,17 +54,13 @@ events.on('modal:close', () => {
 
 // Обработчик события выбора карточки
 events.on('card:select', (item: Item) => {
-	cartHandler.setPreview(item); // Устанавливаем выбранный товар в качестве предварительного просмотра в корзине
+	applicationState.setPreview(item); // Устанавливаем выбранный товар в качестве предварительного просмотра в корзине
 });
 
 // Обработчик изменения элементов в корзине
 events.on('items:change', (items: Item[]) => {
 	page.gallery = items.map((item) => {
 		// Создаем карточку товара для каждого элемента в корзине
-		/*
-		const cardTemplate =
-			cloneTemplate<HTMLTemplateElement>(cardCatalogTemplate);
-		*/
 		const card = new Card('card', cloneTemplate(cardCatalogTemplate), {
 			// Обработчик клика по карточке, который вызывает событие выбора карточки
 			onClick: () => events.emit('card:select', item),
@@ -77,15 +72,15 @@ events.on('items:change', (items: Item[]) => {
 
 // Обработчик изменения превью карточки товара
 events.on('preview:change', (item: Item) => {
-	const isInCart = cartHandler.isItemInCart(item); // Проверяем, находится ли товар уже в корзине
+	const isInCart = applicationState.isItemInCart(item); // Проверяем, находится ли товар уже в корзине
 
 	const card = new Card('card', cloneTemplate(cardPreviewTemplate), {
 		// Обработчик клика по карточке в превью
 		onClick: () => {
 			if (isInCart) {
-				cartHandler.removeFromCart(item.id); // Удаляем товар из корзины, если он уже там
+				applicationState.removeFromCart(item.id); // Удаляем товар из корзины, если он уже там
 			} else {
-				cartHandler.addToCart(item); // Добавляем товар в корзину, если его там нет
+				applicationState.addToCart(item); // Добавляем товар в корзину, если его там нет
 			}
 			// Обновляем текст кнопки в зависимости от состояния товара в корзине
 			card.button = isInCart ? 'В корзину' : 'Удалить из корзины';
@@ -103,19 +98,21 @@ events.on('preview:change', (item: Item) => {
 // Подписываемся на событие изменения корзины
 events.on('basket:change', () => {
 	// Обновляем счетчик на странице, устанавливая его равным количеству товаров в корзине
-	page.counter = cartHandler.items.length;
+	page.counter = applicationState.getCartItemCount();
 
 	// Обновляем массив карточек в корзине, используя метод reduce
-	basket.items = cartHandler.cart.reduce((acc, cartItem) => {
+	basket.items = applicationState.cart.reduce((acc, cartItem) => {
 		// Находим элемент в списке товаров по ID из корзины
-		const item = cartHandler.items.find((item) => item.id === cartItem.id);
+		const item = applicationState.inventory.find(
+			(item) => item.id === cartItem.id
+		);
 
 		// Проверяем, найден ли элемент
 		if (item) {
 			// Если элемент найден
 			// Создаем новую карточку для элемента с обработчиком события нажатия
 			const card = new Card('card', cloneTemplate(cardBasketTemplate), {
-				onClick: () => cartHandler.removeFromCart(item.id), // Удаляем элемент из корзины при клике
+				onClick: () => applicationState.removeFromCart(item.id), // Удаляем элемент из корзины при клике
 			});
 
 			// Добавляем отрендеренную карточку в аккумулятор
@@ -127,7 +124,7 @@ events.on('basket:change', () => {
 	}, []); // Начинаем с пустого массива для аккумулятора
 
 	// Обновляем общую сумму заказа в корзине
-	basket.total = cartHandler.orderInfo.total;
+	basket.total = applicationState.orderInfo.total;
 });
 
 // Обработка события открытия корзины
@@ -155,7 +152,7 @@ events.on(
 	/^order\..*:change/, // Регулярное выражение для отслеживания событий изменения полей, начинающихся с "order."
 	(data: { field: keyof OrderFormInterface; value: string }) => {
 		// Обновление поля заказа в обработчике корзины с использованием полученного значения
-		cartHandler.updateOrderField(data.field, data.value);
+		applicationState.updateOrderField(data.field, data.value);
 	}
 );
 
@@ -164,7 +161,7 @@ events.on(
 	/^contacts\..*:change/, // Регулярное выражение для отслеживания событий изменения полей, начинающихся с "contacts."
 	(data: { field: keyof OrderFormInterface; value: string }) => {
 		// Обновление поля заказа в обработчике корзины с использованием полученного значения
-		cartHandler.updateOrderField(data.field, data.value);
+		applicationState.updateOrderField(data.field, data.value);
 	}
 );
 
@@ -210,34 +207,34 @@ events.on('order:submit', () => {
 
 // Обработка события отправки контактной информации
 events.on('contacts:submit', async () => {
-	try {
-		// Отправка заказа с информацией из корзины
-		// Ожидание завершения операции отправки
-		await apiHandler.orderProducts(cartHandler.orderInfo);
+	// Отправка заказа с информацией из корзины
+	applicationApi
+		.orderProducts(applicationState.orderInfo)
+		.then(() => {
+			// Создание и отображение успешного сообщения
+			const success = new Success(cloneTemplate(successTemplate), {
+				// Обработчик события клика для закрытия модального окна
+				onClick: () => {
+					modal.close(); // Закрытие модального окна при клике
+				},
+			});
 
-		// Создание и отображение успешного сообщения
-		const success = new Success(cloneTemplate(successTemplate), {
-			// Обработчик события клика для закрытия модального окна
-			onClick: () => {
-				modal.close(); // Закрытие модального окна при клике
-			},
+			// Очистка содержимого корзины после успешной отправки заказа
+			applicationState.clearCart();
+			// Эмитирование события изменения состояния корзины
+			events.emit('basket:change');
+
+			// Отображение успешного сообщения в модальном окне
+			modal.render({
+				content: success.render({ total: applicationState.orderInfo.total }), // Передача общей суммы заказа
+			});
+			modal.open(); // Открытие модального окна для отображения сообщения
+		})
+		.catch((err) => {
+			// Обработка ошибок при отправке заказа
+			const errorMessage =
+				'Произошла ошибка при отправке заказа. Пожалуйста, попробуйте еще раз.'; // Сообщение об ошибке
+			handleError(errorMessage); // Вызов функции для обработки ошибки
+			alert(errorMessage); // Уведомление пользователя об ошибке через всплывающее окно
 		});
-
-		// Очистка содержимого корзины после успешной отправки заказа
-		cartHandler.clearCart();
-		// Эмитирование события изменения состояния корзины
-		events.emit('basket:change');
-
-		// Отображение успешного сообщения в модальном окне
-		modal.render({
-			content: success.render({ total: cartHandler.orderInfo.total }), // Передача общей суммы заказа
-		});
-		modal.open(); // Открытие модального окна для отображения сообщения
-	} catch (err) {
-		// Обработка ошибок при отправке заказа
-		const errorMessage =
-			'Произошла ошибка при отправке заказа. Пожалуйста, попробуйте еще раз.'; // Сообщение об ошибке
-		handleError(errorMessage); // Вызов функции для обработки ошибки
-		alert(errorMessage); // Уведомление пользователя об ошибке через всплывающее окно
-	}
 });

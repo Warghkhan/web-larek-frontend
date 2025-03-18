@@ -71,7 +71,7 @@ export interface ApplicationStateInterface {
 	// Очищает корзину полностью
 	clearCart(): void;
 	// Добавляет ID товаров в поле items для orderInfo
-	setOrderItems(): void;
+	updateOrderItems(): void;
 	// Обновляет поля email, phoneNumber, address и payment в orderInfo
 	updateOrderField(field: keyof OrderFormInterface, value: string): void;
 	// Проверяет корректность контактной информации

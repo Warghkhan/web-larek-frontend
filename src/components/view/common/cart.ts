@@ -19,23 +19,20 @@ export class Cart extends View<CartInterface> {
 		// Вызываем конструктор базового класса с клонированным шаблоном корзины и событиями
 		super(cloneTemplate(Cart.template), events);
 
-		try {
-			// Находим элементы корзины в DOM с помощью утилиты ensureElement
-			this._list = ensureElement<HTMLElement>('.basket__list', this.container);
-			this._total = this.container.querySelector('.basket__price'); // Ищем элемент для общей суммы
-			this._button = this.container.querySelector('.button') as HTMLButtonElement | null; // Ищем кнопку оформления заказа
+		// Находим элементы корзины в DOM с помощью утилиты ensureElement
+		this._list = ensureElement<HTMLElement>('.basket__list', this.container);
+		this._total = this.container.querySelector('.basket__price'); // Ищем элемент для общей суммы
+		this._button = this.container.querySelector(
+			'.button'
+		) as HTMLButtonElement | null; // Ищем кнопку оформления заказа
 
-			// Если кнопка найдена, добавляем обработчик события на клик
-			if (this._button) {
-				this._button.addEventListener('click', () => {
-					events.emit('order:open'); // Генерируем событие для открытия заказа
-				});
-			} else {
-				handleError('Кнопка не найдена в корзине.'); // Обработка ошибки, если кнопка не найдена
-			}
-		} catch (error) {
-			// Обработка ошибок инициализации корзины
-			handleError(`Ошибка инициализации корзины: ${error.message}`);
+		// Если кнопка найдена, добавляем обработчик события на клик
+		if (this._button) {
+			this._button.addEventListener('click', () => {
+				events.emit('order:open'); // Генерируем событие для открытия заказа
+			});
+		} else {
+			handleError('Кнопка не найдена в корзине.'); // Обработка ошибки, если кнопка не найдена
 		}
 
 		this.items = []; // Инициализируем список товаров как пустой
@@ -46,6 +43,7 @@ export class Cart extends View<CartInterface> {
 		if (items.length) {
 			// Если есть товары, заменяем содержимое списка на новые элементы
 			this._list.replaceChildren(...items);
+			this.events.emit('basket:change');
 			if (this._button instanceof HTMLButtonElement) {
 				this.setDisabled(this._button, false); // Активируем кнопку, если есть товары
 			}
