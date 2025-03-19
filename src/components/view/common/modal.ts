@@ -34,13 +34,13 @@ export class Modal extends View<ModalInterface> {
 
 	// Метод для открытия модального окна
 	open() {
-		this.toggleClass (this.container, 'modal_active', true); // Добавляем класс для отображения модалки
+		this.toggleClass(this.container, 'modal_active', true); // Добавляем класс для отображения модалки
 		this.events.emit('modal:open'); // Генерируем событие открытия модалки
 	}
 
 	// Метод для закрытия модального окна
 	close() {
-		this.toggleClass (this.container, 'modal_active', false); // Убираем класс отображения
+		this.toggleClass(this.container, 'modal_active', false); // Убираем класс отображения
 		this.content = null; // Очищаем содержимое модалки
 		this.events.emit('modal:close'); // Генерируем событие закрытия модалки
 	}

@@ -23,7 +23,7 @@ const applicationState = new ApplicationState(events);
 // Получение шаблонов из HTML документа
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog'); // Шаблон каталога карточек
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview'); // Шаблон превью карточки
-const basketTemplate = ensureElement<HTMLTemplateElement>('#basket'); // Шаблон корзины
+//const basketTemplate = ensureElement<HTMLTemplateElement>('#basket'); // Шаблон корзины
 const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket'); // Шаблон карточки в корзине
 const orderTemplate = ensureElement<HTMLTemplateElement>('#order'); // Шаблон формы заказа
 const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts'); // Шаблон контактов
@@ -37,10 +37,10 @@ const basket = new Cart(events); // Экземпляр корзины
 const orderForm = new OrderForm('order', cloneTemplate(orderTemplate), events); // Экземпляр формы заказа
 const contacts = new UserInfo(cloneTemplate(contactsTemplate), events); // Экземпляр информации о пользователе
 
-// Получение списка продуктов и установка их в корзину
+// Получение списка продуктов и установка их на страницу
 applicationApi
 	.getProductList() // Запрос списка продуктов
-	.then(applicationState.populateInventory.bind(applicationApi)) // Установка полученных продуктов в корзину
+	.then((items) => applicationState.populateInventory(items)) // Установка полученных продуктов на страницу
 	.catch((e) => console.warn(e)); // Логирование ошибок, если они возникли
 
 // Обработчики событий для открытия и закрытия модального окна
@@ -86,7 +86,7 @@ events.on('preview:change', (item: Item) => {
 			card.button = isInCart ? 'В корзину' : 'Удалить из корзины';
 		},
 	});
-
+	//applicationState.updateOrderField;
 	// Устанавливаем текст кнопки при инициализации в зависимости от состояния товара в корзине
 	card.button = isInCart ? 'Удалить из корзины' : 'В корзину';
 	modal.render({
@@ -99,6 +99,7 @@ events.on('preview:change', (item: Item) => {
 events.on('basket:change', () => {
 	// Обновляем счетчик на странице, устанавливая его равным количеству товаров в корзине
 	page.counter = applicationState.getCartItemCount();
+	//applicationState.updateOrderField;
 
 	// Обновляем массив карточек в корзине, используя метод reduce
 	basket.items = applicationState.cart.reduce((acc, cartItem) => {
@@ -111,7 +112,7 @@ events.on('basket:change', () => {
 		if (item) {
 			// Если элемент найден
 			// Создаем новую карточку для элемента с обработчиком события нажатия
-			const card = new Card('card', cloneTemplate(cardBasketTemplate), {
+			const card = new Card('card', cloneTemplate(cardPreviewTemplate), {
 				onClick: () => applicationState.removeFromCart(item.id), // Удаляем элемент из корзины при клике
 			});
 
@@ -124,12 +125,15 @@ events.on('basket:change', () => {
 	}, []); // Начинаем с пустого массива для аккумулятора
 
 	// Обновляем общую сумму заказа в корзине
+
 	basket.total = applicationState.orderInfo.total;
 });
 
 // Обработка события открытия корзины
 events.on('basket:open', () => {
 	// Отображаем содержимое корзины в модальном окне
+	//basket.items = applicationState.cart;
+
 	modal.render({ content: basket.render() });
 	modal.open(); // Открываем модальное окно
 });
@@ -222,7 +226,7 @@ events.on('contacts:submit', async () => {
 			// Очистка содержимого корзины после успешной отправки заказа
 			applicationState.clearCart();
 			// Эмитирование события изменения состояния корзины
-			events.emit('basket:change');
+			events.emit('');
 
 			// Отображение успешного сообщения в модальном окне
 			modal.render({

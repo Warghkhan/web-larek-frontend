@@ -18,7 +18,6 @@ export class Page extends View<PageInterface> {
 		this._gallery = ensureElement<HTMLElement>('.gallery'); // Получаем элемент галереи
 		this._wrapper = ensureElement<HTMLElement>('.page__wrapper'); // Получаем обертку страницы
 		this._cart = ensureElement<HTMLElement>('.header__basket'); // Получаем элемент корзины
-		console.log('Page constructor work');
 		// Добавляем обработчик события для клика на корзину
 		this._cart.addEventListener('click', () => {
 			this.events.emit('basket:open'); // Генерируем событие открытия корзины

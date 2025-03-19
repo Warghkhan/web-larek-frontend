@@ -30,6 +30,7 @@ export class Card extends Component<CardInterface> {
 		this._category = container.querySelector(
 			`.${blockName}__category`
 		) as HTMLElement;
+		console.log(this._category);
 		this._price = container.querySelector(
 			`.${blockName}__price`
 		) as HTMLElement;
@@ -81,11 +82,21 @@ export class Card extends Component<CardInterface> {
 		}
 		this.setDisabled(this._button, value === null); // Дизаблизация кнопки, если цена отсутствует
 	}
-
+	/*
+	set category(value: Categories) {
+		this.setText(this._category, value); // Установка текста категории
+		//this._category.className = categoryMapping[value]; // Заменяем все классы на новый
+	}
+*/
 	// Сеттер для категории карточки
 	set category(value: Categories) {
 		this.setText(this._category, value); // Установка текста категории
-		this._category.className = categoryMapping[value]; // Заменяем все классы на новый
+		// Удаляем все классы, связанные с категориями
+		Object.values(categoryMapping).forEach((className) => {
+			this._category.classList.remove(className);
+		});
+		// Добавляем новый класс
+		this._category.classList.add(categoryMapping[value]);
 	}
 }
 

@@ -41,21 +41,18 @@ export class Cart extends View<CartInterface> {
 	// Сеттер для обновления списка товаров в корзине
 	set items(items: HTMLElement[]) {
 		if (items.length) {
-			// Если есть товары, заменяем содержимое списка на новые элементы
 			this._list.replaceChildren(...items);
-			this.events.emit('basket:change');
 			if (this._button instanceof HTMLButtonElement) {
-				this.setDisabled(this._button, false); // Активируем кнопку, если есть товары
+				this.setDisabled(this._button, false);
 			}
 		} else {
-			// Если список пуст, отображаем сообщение
 			this._list.replaceChildren(
 				createElement<HTMLParagraphElement>('p', {
-					textContent: 'Самое время наполнить корзину...', // Сообщение для пользователя
+					textContent: 'Самое время наполнить корзину...',
 				})
 			);
 			if (this._button instanceof HTMLButtonElement) {
-				this.setDisabled(this._button, true); // Деактивируем кнопку, если нет товаров
+				this.setDisabled(this._button, true);
 			}
 		}
 	}
