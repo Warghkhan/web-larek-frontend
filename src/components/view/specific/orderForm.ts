@@ -20,7 +20,7 @@ export class OrderForm extends Form<OrderFormInterface> {
 
 		// Инициализация кнопок оплаты
 		this.initPaymentButtons();
-		
+
 		// По умолчанию активируем оплату картой
 		this.toggleActiveButton('card');
 	}
@@ -47,7 +47,7 @@ export class OrderForm extends Form<OrderFormInterface> {
 		this.toggleClass(this._cash, 'button_alt-active', activeButton === 'cash'); // Активировать кнопку наличными
 		this.toggleClass(this._card, 'button_alt-active', activeButton === 'card'); // Активировать кнопку картой
 	}
-	
+
 	// Метод для установки активного метода оплаты
 	setPaymentMethod(method: string) {
 		this.toggleActiveButton(method);
@@ -57,7 +57,7 @@ export class OrderForm extends Form<OrderFormInterface> {
 		// Метод для отключения активных состояний кнопок
 		this.toggleActiveButton(''); // Сброс активного состояния для обеих кнопок
 	}
-	
+
 	// Переопределяем метод render для установки активного способа оплаты
 	render(state: Partial<OrderFormInterface> & FormInterface) {
 		const result = super.render(state);

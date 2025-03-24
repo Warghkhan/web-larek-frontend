@@ -52,10 +52,13 @@ export class Form<T> extends View<FormInterface> {
 	// Сеттер для свойства valid, который включает или отключает кнопку отправки.
 	set valid(value: boolean) {
 		if (this._submit) {
-			this._submit.disabled = !value; // Напрямую устанавливаем свойство disabled
-			
-			// Добавим вывод в консоль для отладки
-			console.log(`Устанавливаем кнопку в состояние: ${value ? 'активна' : 'неактивна'}`);
+			this.setDisabled(this._submit, !value);
+
+			/*
+			console.log(
+				`Устанавливаем кнопку в состояние: ${value ? 'активна' : 'неактивна'}`
+			);
+			*/
 		}
 	}
 
@@ -67,7 +70,7 @@ export class Form<T> extends View<FormInterface> {
 
 	// Метод для очистки всех полей формы
 	public clearForm() {
-		this._inputs.forEach(input => {
+		this._inputs.forEach((input) => {
 			input.value = '';
 		});
 		this.errors = '';
@@ -75,8 +78,8 @@ export class Form<T> extends View<FormInterface> {
 
 	// Метод для проверки наличия обязательных полей
 	public checkRequiredFields(): boolean {
-		const requiredInputs = this._inputs.filter(input => input.required);
-		return requiredInputs.every(input => input.value.trim() !== '');
+		const requiredInputs = this._inputs.filter((input) => input.required);
+		return requiredInputs.every((input) => input.value.trim() !== '');
 	}
 
 	// Метод для рендеринга состояния формы.
