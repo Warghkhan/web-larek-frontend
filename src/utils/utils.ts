@@ -166,7 +166,15 @@ export function handlePrice(price: number): string {
 	return priceString.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ');
 }
 
-export function handleError(errorMessage: string): void {
+export function handleError(errorMessage: string, errorCode?: string): void {
+	const timestamp = new Date().toISOString();
 	const errorResponse: ErrorResponse = { error: errorMessage };
-	console.warn(errorResponse); // Логирование ошибки
+	
+	// Расширенное логирование ошибок
+	console.warn(`[${timestamp}] Ошибка${errorCode ? ` (${errorCode})` : ''}: ${errorMessage}`);
+	
+	// В реальном приложении здесь можно добавить:
+	// 1. Отправку ошибок на сервер для анализа
+	// 2. Сохранение в localStorage для дебага
+	// 3. Показ пользователю через UI компонент
 }

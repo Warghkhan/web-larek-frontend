@@ -11,18 +11,7 @@ export class ApplicationApi extends Api {
 		super(baseUrl, options); // Вызываем конструктор родительского класса
 		this.cdn = cdn; // Инициализируем переменную cdn
 	}
-	/*
-	// Метод для получения списка продуктов
-	getProductList(): Promise<Item[]> {
-		return this.get('/product') // Выполняем GET-запрос к API для получения списка продуктов
-			.then((data: ApiResponse) =>
-				data.items.map((item) => ({
-					...item, // Копируем все свойства товара
-					image: this.cdn + item.image, // Формируем полный URL для изображения, добавляя cdn к пути
-				}))
-			);
-	}
-*/
+
 	getProductList(): Promise<Item[]> {
 		return this.get('/product') // Выполняем GET-запрос к API для получения списка продуктов
 			.then((data: ApiResponse) => {

@@ -6,7 +6,7 @@ import { categoryMapping, CDN_URL } from '../../../utils/constants'; // Импо
 // Класс Card, представляющий карточку товара
 export class Card extends Component<CardInterface> {
 	protected _title: HTMLElement; // Элемент заголовка карточки
-	protected _image: HTMLImageElement; // Элемент изображения карточки
+
 	protected _category: HTMLElement; // Элемент категории карточки
 	protected _price: HTMLElement; // Элемент цены карточки
 	protected _button: HTMLButtonElement; // Элемент кнопки карточки
@@ -20,25 +20,30 @@ export class Card extends Component<CardInterface> {
 
 		// Инициализация элементов карточки с помощью утилиты ensureElement
 		this._title = ensureElement<HTMLElement>(`.${blockName}__title`, container);
-		this._image = ensureElement<HTMLImageElement>(
-			`.${blockName}__image`,
-			container
-		);
 		this._button = container.querySelector(
-			`.${blockName}__button`
+			`.${blockName}__button, .basket__item-delete`
 		) as HTMLButtonElement;
 		this._category = container.querySelector(
 			`.${blockName}__category`
 		) as HTMLElement;
-		console.log(this._category);
 		this._price = container.querySelector(
 			`.${blockName}__price`
 		) as HTMLElement;
 
 		// Добавление обработчика события клика
 		if (action?.onClick) {
-			const clickTarget = this._button || container; // Цель клика - кнопка или контейнер
-			clickTarget.addEventListener('click', action.onClick); // Добавление обработчика клика
+			// Для карточек в корзине используем только кнопку удаления
+			if (container.classList.contains('card_compact') && this._button) {
+				this._button.addEventListener('click', action.onClick);
+			}
+			// Для карточки в модальном окне используем только кнопку
+			else if (container.classList.contains('card_full') && this._button) {
+				this._button.addEventListener('click', action.onClick);
+			}
+			// Для карточек в каталоге используем весь контейнер
+			else if (!container.classList.contains('card_full')) {
+				container.addEventListener('click', action.onClick);
+			}
 		}
 	}
 
@@ -58,11 +63,6 @@ export class Card extends Component<CardInterface> {
 		return this._title.textContent || ''; // Получение текста заголовка
 	}
 
-	// Сеттер для изображения карточки
-	set image(value: string) {
-		this.setImage(this._image, `${CDN_URL}${value}`); // Установка источника изображения
-	}
-
 	// Сеттер для изменения текста кнопки
 	set button(value: string) {
 		this.setText(this._button, value);
@@ -80,23 +80,22 @@ export class Card extends Component<CardInterface> {
 		} else {
 			this.setText(this._price, 'Бесценно'); // Если цена отсутствует
 		}
-		this.setDisabled(this._button, value === null); // Дизаблизация кнопки, если цена отсутствует
 	}
-	/*
-	set category(value: Categories) {
-		this.setText(this._category, value); // Установка текста категории
-		//this._category.className = categoryMapping[value]; // Заменяем все классы на новый
-	}
-*/
+
 	// Сеттер для категории карточки
+
 	set category(value: Categories) {
 		this.setText(this._category, value); // Установка текста категории
-		// Удаляем все классы, связанные с категориями
-		Object.values(categoryMapping).forEach((className) => {
-			this._category.classList.remove(className);
-		});
-		// Добавляем новый класс
-		this._category.classList.add(categoryMapping[value]);
+
+		// Проверяем, существует ли _category и classList
+		if (this._category && this._category.classList) {
+			// Удаляем все классы, связанные с категориями
+			Object.values(categoryMapping).forEach((className) => {
+				this._category.classList.remove(className);
+			});
+			// Добавляем новый класс
+			this._category.classList.add(categoryMapping[value]);
+		}
 	}
 }
 
@@ -108,14 +107,24 @@ export class Product extends Card {
 }
 
 // Класс ProductPreview, наследующий от Card
-export class ProductPreview extends Card {
+export class ProductPreview extends Product {
 	protected _description: HTMLElement; // Элемент описания карточки
+	protected _image: HTMLImageElement; // Элемент изображения карточки
 
 	constructor(container: HTMLElement, action?: Action) {
-		super('card', container, action); // Вызов конструктора родительского класса
+		super(container, action); // Вызов конструктора родительского класса
 		this._description = container.querySelector(
 			`.${this.blockName}__text`
 		) as HTMLElement; // Инициализация элемента описания
+		this._image = ensureElement<HTMLImageElement>(
+			`.${this.blockName}__image`,
+			container
+		);
+	}
+
+	// Сеттер для изображения карточки
+	set image(value: string) {
+		this.setImage(this._image, `${CDN_URL}${value}`); // Установка источника изображения
 	}
 
 	// Сеттер для описания карточки

@@ -18,7 +18,7 @@ export abstract class Component<T> {
 			el.textContent = value !== null ? String(value) : '';
 		} else {
 			// Логируем ошибку, если элемент некорректен
-			console.log('setText: Element is null or undefined. Cannot set text.');
+			console.log(`setText: ${el} is null or undefined. Cannot set text.`);
 		}
 	}
 

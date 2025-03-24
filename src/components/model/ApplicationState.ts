@@ -48,8 +48,8 @@ export class ApplicationState implements ApplicationStateInterface {
 	// Удаляет товар из корзины по ID
 	removeFromCart(id: string): void {
 		this.cart = this.cart.filter((item) => item.id !== id); // Фильтруем массив, исключая товар с указанным ID
-		this.events.emit('basket:change');
-		this.updateOrderItems();
+		this.updateOrderItems(); // Обновляем информацию о заказе после изменения корзины
+		this.events.emit('basket:change'); // Эмитируем событие изменения корзины
 	}
 
 	// Очищает корзину полностью
@@ -98,26 +98,79 @@ export class ApplicationState implements ApplicationStateInterface {
 		}
 	}
 
-	// Проверяет корректность контактной информации
+	// Отдельные методы для валидации полей
+	
+	// Проверяет корректность email
+	validateEmail(email: string): string | null {
+		const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+$/;
+		if (!email) {
+			return 'Email не может быть пустым';
+		}
+		if (!emailRegex.test(email)) {
+			return 'Некорректный формат email. Пример: example@example.com';
+		}
+		return null;
+	}
+	
+	// Проверяет корректность телефона
+	validatePhone(phone: string): string | null {
+		const phoneRegex = /^\+?[0-9]{1,3}[-\s]?\(?[0-9]{3}\)?[-\s]?[0-9]{3}[-\s]?[0-9]{2}[-\s]?[0-9]{2}$/;
+		if (!phone) {
+			return 'Телефон не может быть пустым';
+		}
+		if (!phoneRegex.test(phone)) {
+			return 'Некорректный формат телефона. Пример: +7 (123) 456-78-90';
+		}
+		return null;
+	}
+	
+	// Проверяет корректность адреса
+	validateAddress(address: string): string | null {
+		if (!address || address.trim() === '') {
+			return 'Адрес не может быть пустым';
+		}
+		if (address.trim().length < 10) {
+			return 'Адрес должен содержать не менее 10 символов';
+		}
+		return null;
+	}
+	
+	// Проверяет корректность метода оплаты
+	validatePayment(payment: string): string | null {
+		const validPayments = Object.keys(paymentMapping);
+		if (!validPayments.includes(payment)) {
+			return 'Выберите корректный метод оплаты';
+		}
+		return null;
+	}
+
+	// Обновленный метод валидации контактной информации с использованием новых методов
 	validateContactInfo(): boolean {
-		const errors: ValidationErrors = {}; // Объект для хранения ошибок валидации
-		const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+$/; // Регулярное выражение для проверки email
+		const errors: ValidationErrors = {};
+		
+		// Используем отдельные методы валидации для каждого поля
+		const emailError = this.validateEmail(this.orderInfo.email);
+		if (emailError) {
+			errors.email = emailError;
+		}
+		
+		const phoneError = this.validatePhone(this.orderInfo.phone);
+		if (phoneError) {
+			errors.phone = phoneError;
+		}
+		
+		const addressError = this.validateAddress(this.orderInfo.address);
+		if (addressError) {
+			errors.address = addressError;
+		}
+		
+		const paymentError = this.validatePayment(this.orderInfo.payment);
+		if (paymentError) {
+			errors.payment = paymentError;
+		}
 
-		// Проверяем корректность email
-		if (!this.orderInfo.email || !emailRegex.test(this.orderInfo.email)) {
-			errors.email = 'Некорректный email'; // Добавляем ошибку, если email некорректен
-		}
-		// Проверяем наличие телефона
-		if (!this.orderInfo.phone) {
-			errors.phone = 'Необходимо указать телефон'; // Добавляем ошибку, если телефон не указан
-		}
-		// Проверяем наличие адреса
-		if (!this.orderInfo.address) {
-			errors.address = 'Необходимо указать адрес'; // Добавляем ошибку, если адрес не указан
-		}
-
-		this.formValidationErrors = errors; // Сохраняем ошибки валидации в объекте formValidationErrors
-		return Object.keys(errors).length === 0; // Возвращаем true, если ошибок нет, иначе false
+		this.formValidationErrors = errors;
+		return Object.keys(errors).length === 0;
 	}
 
 	// Сбрасывает orderInfo после завершения покупки

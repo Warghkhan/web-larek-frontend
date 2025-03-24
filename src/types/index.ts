@@ -172,7 +172,15 @@ export interface FormInterface {
 	// Указывает, является ли форма валидной.
 	valid: boolean;
 	// Список ошибок валидации, если таковые имеются.
-	errors: string[];
+	errors: string;
+}
+
+// Добавим расширенный интерфейс для форм с более структурированной обработкой ошибок
+export interface ExtendedFormInterface extends FormInterface {
+	// Объект с ошибками по полям
+	fieldErrors?: ValidationErrors;
+	// Состояние валидации полей
+	fieldValidity?: Record<string, boolean>;
 }
 
 // Интерфейс CardInterface представляет собой структуру данных для карточки товара
