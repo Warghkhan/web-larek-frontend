@@ -137,7 +137,6 @@ events.on('basket:change', () => {
 // Обработка события открытия корзины
 events.on('basket:open', () => {
 	// Отображаем содержимое корзины в модальном окне
-	//basket.items = applicationState.cart;
 	modal.render({ content: basket.render() });
 	modal.open(); // Открываем модальное окно
 });
@@ -170,6 +169,7 @@ events.on('order:open', () => {
 
 	modal.open(); // Открываем модальное окно
 });
+
 // Подписка на события изменения полей формы заказа
 events.on(
 	/^order\..*:change/, // Регулярное выражение для отслеживания событий изменения полей, начинающихся с "order."
@@ -220,13 +220,7 @@ events.on(
 
 		// Обновление валидности формы
 		contacts.valid = emailValid && phoneValid;
-		/*
-		console.log(
-			`Контактная форма валидна: ${
-				emailValid && phoneValid
-			}, email: ${emailValid}, phone: ${phoneValid}`
-		);
-		*/
+
 		// Отображение ошибок, если они есть
 		if (error) {
 			contacts.errors = error;
@@ -313,35 +307,38 @@ events.on('contacts:submit', async () => {
 	applicationApi
 		.orderProducts(applicationState.orderInfo)
 		.then(() => {
-			// Создание и отображение успешного сообщения
-			const success = new Success(cloneTemplate(successTemplate), {
-				// Обработчик события клика для закрытия модального окна
-				onClick: () => {
-					modal.close(); // Закрытие модального окна при клике
-				},
-			});
-
-			// Установка общей суммы заказа в компоненте Success
-			success.total = applicationState.orderInfo.total;
-
 			// Эмитирование события изменения состояния корзины
-			events.emit('');
-
-			// Отображение успешного сообщения в модальном окне
-			modal.render({
-				content: success.render(), // Передача компонента для рендеринга
-			});
-			modal.open(); // Открытие модального окна для отображения сообщения
-		})
-		.then(() => {
-			// Очистка содержимого корзины после успешной отправки заказа
-			applicationState.clearCart();
+			events.emit('order:success');
 		})
 		.catch((err) => {
 			// Обработка ошибок при отправке заказа
-			const errorMessage =
-				'Произошла ошибка при отправке заказа. Пожалуйста, попробуйте еще раз.'; // Сообщение об ошибке
-			handleError(errorMessage); // Вызов функции для обработки ошибки
-			alert(errorMessage); // Уведомление пользователя об ошибке через всплывающее окно
+			handleError(err); // Вызов функции для обработки ошибки
+			events.emit('order:error', err);
 		});
+});
+
+events.on('order:success', async () => {
+	// Создание и отображение успешного сообщения
+	const success = new Success(cloneTemplate(successTemplate), {
+		// Обработчик события клика для закрытия модального окна
+		onClick: () => {
+			modal.close(); // Закрытие модального окна при клике
+		},
+	});
+
+	// Установка общей суммы заказа в компоненте Success
+	success.total = applicationState.orderInfo.total;
+
+	// Отображение успешного сообщения в модальном окне
+	modal.render({
+		content: success.render(), // Передача компонента для рендеринга
+	});
+	modal.open(); // Открытие модального окна для отображения сообщения
+	// Очистка содержимого корзины после успешной отправки заказа
+	applicationState.clearCart();
+});
+
+events.on('order:error', async (err) => {
+	// Уведомление пользователя об ошибке через всплывающее окно
+	alert(err);
 });

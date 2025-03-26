@@ -169,10 +169,14 @@ export function handlePrice(price: number): string {
 export function handleError(errorMessage: string, errorCode?: string): void {
 	const timestamp = new Date().toISOString();
 	const errorResponse: ErrorResponse = { error: errorMessage };
-	
+
 	// Расширенное логирование ошибок
-	console.warn(`[${timestamp}] Ошибка${errorCode ? ` (${errorCode})` : ''}: ${errorMessage}`);
-	
+	console.warn(
+		`[${timestamp}] Ошибка${
+			errorCode ? ` (${errorCode})` : ''
+		}: ${errorMessage}`
+	);
+
 	// В реальном приложении здесь можно добавить:
 	// 1. Отправку ошибок на сервер для анализа
 	// 2. Сохранение в localStorage для дебага

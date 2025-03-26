@@ -79,6 +79,7 @@ export class Card extends Component<CardInterface> {
 			this.setText(this._price, `${handlePrice(value)} синапсов`); // Форматирование цены
 		} else {
 			this.setText(this._price, 'Бесценно'); // Если цена отсутствует
+			this.setDisabled(this._button, value === null); //
 		}
 	}
 

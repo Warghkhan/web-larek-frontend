@@ -42,6 +42,7 @@ export class Cart extends View<CartInterface> {
 	set items(items: HTMLElement[]) {
 		if (items.length) {
 			this._list.replaceChildren(...items);
+			this.refreshIndex();
 			if (this._button instanceof HTMLButtonElement) {
 				this.setDisabled(this._button, false);
 			}
@@ -75,5 +76,15 @@ export class Cart extends View<CartInterface> {
 		} else {
 			handleError('Элемент для отображения общей суммы не найден.'); // Обработка ошибки
 		}
+	}
+
+	// Метод для обновления индексов таблички при удалении товара из корзины
+	refreshIndex() {
+		Array.from(this._list.children).forEach((item, index) =>
+			this.setText(
+				item.querySelector(`.basket__item-index`),
+				(index + 1).toString()
+			)
+		);
 	}
 }
