@@ -53,12 +53,6 @@ export class Form<T> extends View<FormInterface> {
 	set valid(value: boolean) {
 		if (this._submit) {
 			this.setDisabled(this._submit, !value);
-
-			/*
-			console.log(
-				`Устанавливаем кнопку в состояние: ${value ? 'активна' : 'неактивна'}`
-			);
-			*/
 		}
 	}
 

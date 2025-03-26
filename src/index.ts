@@ -44,10 +44,12 @@ applicationApi
 
 // Обработчики событий для открытия и закрытия модального окна
 events.on('modal:open', () => {
+	applicationState.updateOrderField;
 	page.locked = true; // Блокируем страницу, чтобы предотвратить взаимодействие с ней, когда модальное окно открыто
 });
 
 events.on('modal:close', () => {
+	applicationState.updateOrderField;
 	page.locked = false; // Разблокируем страницу, чтобы пользователь мог снова взаимодействовать с ней, когда модальное окно закрыто
 });
 
@@ -164,9 +166,7 @@ events.on('order:open', () => {
 			applicationState.orderInfo.address
 		);
 		orderForm.valid = addressValid;
-		//console.log('Обновили валидность формы заказа:', addressValid);
 	}, 100);
-
 	modal.open(); // Открываем модальное окно
 });
 
@@ -290,19 +290,12 @@ events.on('order:submit', () => {
 			applicationState.orderInfo.phone
 		);
 		contacts.valid = emailValid && phoneValid;
-		/*
-		console.log(
-			'Обновили валидность формы контактов:',
-			emailValid && phoneValid
-		);
-		*/
 	}, 100);
 });
 
 // Обработка события отправки контактной информации
 events.on('contacts:submit', async () => {
 	// Отправка заказа с информацией из корзины
-	//console.log(applicationState.orderInfo);
 
 	applicationApi
 		.orderProducts(applicationState.orderInfo)
@@ -335,7 +328,7 @@ events.on('order:success', async () => {
 	});
 	modal.open(); // Открытие модального окна для отображения сообщения
 	// Очистка содержимого корзины после успешной отправки заказа
-	applicationState.clearCart();
+	applicationState.resetOrderInfo(); // Вызов метода сброса
 });
 
 events.on('order:error', async (err) => {

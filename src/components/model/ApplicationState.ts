@@ -99,7 +99,7 @@ export class ApplicationState implements ApplicationStateInterface {
 	}
 
 	// Отдельные методы для валидации полей
-	
+
 	// Проверяет корректность email
 	validateEmail(email: string): string | null {
 		const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+$/;
@@ -111,10 +111,11 @@ export class ApplicationState implements ApplicationStateInterface {
 		}
 		return null;
 	}
-	
+
 	// Проверяет корректность телефона
 	validatePhone(phone: string): string | null {
-		const phoneRegex = /^\+?[0-9]{1,3}[-\s]?\(?[0-9]{3}\)?[-\s]?[0-9]{3}[-\s]?[0-9]{2}[-\s]?[0-9]{2}$/;
+		const phoneRegex =
+			/^\+?[0-9]{1,3}[-\s]?\(?[0-9]{3}\)?[-\s]?[0-9]{3}[-\s]?[0-9]{2}[-\s]?[0-9]{2}$/;
 		if (!phone) {
 			return 'Телефон не может быть пустым';
 		}
@@ -123,7 +124,7 @@ export class ApplicationState implements ApplicationStateInterface {
 		}
 		return null;
 	}
-	
+
 	// Проверяет корректность адреса
 	validateAddress(address: string): string | null {
 		if (!address || address.trim() === '') {
@@ -134,7 +135,7 @@ export class ApplicationState implements ApplicationStateInterface {
 		}
 		return null;
 	}
-	
+
 	// Проверяет корректность метода оплаты
 	validatePayment(payment: string): string | null {
 		const validPayments = Object.keys(paymentMapping);
@@ -147,23 +148,23 @@ export class ApplicationState implements ApplicationStateInterface {
 	// Обновленный метод валидации контактной информации с использованием новых методов
 	validateContactInfo(): boolean {
 		const errors: ValidationErrors = {};
-		
+
 		// Используем отдельные методы валидации для каждого поля
 		const emailError = this.validateEmail(this.orderInfo.email);
 		if (emailError) {
 			errors.email = emailError;
 		}
-		
+
 		const phoneError = this.validatePhone(this.orderInfo.phone);
 		if (phoneError) {
 			errors.phone = phoneError;
 		}
-		
+
 		const addressError = this.validateAddress(this.orderInfo.address);
 		if (addressError) {
 			errors.address = addressError;
 		}
-		
+
 		const paymentError = this.validatePayment(this.orderInfo.payment);
 		if (paymentError) {
 			errors.payment = paymentError;
@@ -185,6 +186,7 @@ export class ApplicationState implements ApplicationStateInterface {
 			total: 0, // Общая стоимость заказа равна 0
 		};
 		this.clearCart(); // Очищаем корзину после завершения покупки
+		this.updateOrderField;
 		return true; // Возвращаем true, указывая на успешное сброс
 	}
 

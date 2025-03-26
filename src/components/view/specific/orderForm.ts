@@ -60,6 +60,7 @@ export class OrderForm extends Form<OrderFormInterface> {
 
 	// Переопределяем метод render для установки активного способа оплаты
 	render(state: Partial<OrderFormInterface> & FormInterface) {
+		this.clearForm();
 		const result = super.render(state);
 		if (state.payment) {
 			this.toggleActiveButton(state.payment);
